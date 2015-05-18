@@ -17,6 +17,7 @@ jQuery(function($) {
     maxZoom: 18,
     id: 'ezh.i779mp4n',
     accessToken: 'pk.eyJ1IjoiZXpoIiwiYSI6IlpQQ01TR2cifQ.LuIx3e1Ez52srjbRHymXNg',
+    maxZoom: 25
   }).addTo(map);
 
   var colorscale = d3.scale.linear()

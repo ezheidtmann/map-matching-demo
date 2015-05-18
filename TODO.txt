@@ -1,0 +1,14 @@
+Backend
+====
+
+ - Problem: We're getting some segments that appear to cover the same portion of road but have slightly different lat/lng values. 
+ - Solutions: Get node ids from OSRM. Or, at the least, get integer lat/lngs from compressed polyline
+
+ - Problem: import is very slow
+ - Solutions: Migrate to postgres, use postgis extension with proper Point fields, add indexes, and/or use node ids returned from OSRM
+
+Frontend
+====
+
+ - Problem: First page load is very slow
+ - Solutions: Render on canvas or gl, coalesce road segments between intersections, ...

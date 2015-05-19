@@ -33,9 +33,6 @@ def make_bounds(bbox_geojson):
 def _iter_segments_geojson_features(segments):
     bounds = make_bounds(bbox)
     for segment in segments:
-        if segment.num_rides < 1:
-            continue
-
         #if not bounds.prepared.contains(Point(segment.lat_start, segment.lng_start)):
         #    continue;
 
@@ -50,14 +47,14 @@ def _iter_segments_geojson_features(segments):
             },
             'properties': {
                 'segment_pk': segment.pk,
-                'ride_count': segment.num_rides,
+                'ride_count': segment.ride_count,
                 'rides': [ so.ride.pk for so in segment.segmentordering_set.all() ],
             },
         }
 
 def segments(request):
     from django.db.models import Count
-    segments = models.Segment.objects.annotate(num_rides=Count('segmentordering'))
+    segments = models.Segment.objects.annotate(ride_count=Count('segmentordering')).filter(ride_count__gt=1)
     data = list(_iter_segments_geojson_features(segments))
 
     return JsonResponse({ 'features': data, 'type': 'FeatureCollection' })

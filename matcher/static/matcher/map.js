@@ -51,5 +51,8 @@ jQuery(function($) {
       }
     }).addTo(map);
     $('#loading').hide();
+  })
+  .fail(function(jqxhr, textStatus) {
+    $('#loading').text('GET /segments failed: ' + textStatus);
   });
 });

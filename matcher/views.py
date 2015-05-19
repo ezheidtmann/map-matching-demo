@@ -55,6 +55,7 @@ def _iter_segments_geojson_features(segments):
 def segments(request):
     from django.db.models import Count
     segments = models.Segment.objects.annotate(ride_count=Count('segmentordering')).filter(ride_count__gt=1)
+    segments = segments.prefetch_related('segmentordering_set__ride')
     data = list(_iter_segments_geojson_features(segments))
 
     return JsonResponse({ 'features': data, 'type': 'FeatureCollection' })

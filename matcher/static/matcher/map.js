@@ -25,16 +25,25 @@ jQuery(function($) {
     .range(['#0f0', '#f00']);
 
   $.ajax('/segments').done(function(data) {
-    console.log(data);
+    window.data = data;
     L.geoJson(data, {
       style: function(feature) {
-        var color = colorscale(feature.properties.ride_count);
-        console.log(color);
+        var ride_count = feature.properties.ride_count;
+        var color;
+        if (ride_count == 1) {
+          color = '#000';
+        }
+        else {
+          color = colorscale(feature.properties.ride_count);
+        }
         return { 
-          opacity: 1,
+          opacity: 0.2,
           stroke: true,
           color: color
         };
+      },
+      onEachFeature: function(feature, layer) {
+        layer.bindPopup(feature.properties.segment_pk + ':<br><br>' + feature.properties.rides.join('<br>') + '<br>' + JSON.stringify(feature.geometry.coordinates));
       }
     }).addTo(map);
     $('#loading').hide();

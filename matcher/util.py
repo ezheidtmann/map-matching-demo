@@ -6,6 +6,7 @@ import urllib
 OSRM_API_URL = 'http://localhost:5000'
 
 def querystring_parts_from_geojson_geometry(geometry):
+    yield ('compression', 'false')
     if geometry['type'] == 'LineString':
 
         # We have to fake the time because linestrings don't have timestamp data
@@ -23,15 +24,23 @@ def get_polyline(geometry):
     line = PolylineCodec().decode(geometry)
     return list(divide_by_ten(line))
 
-def get_matched_trace(geometry):
+def get_osrm_match_data(geometry):
     qs = urllib.urlencode(list(querystring_parts_from_geojson_geometry(geometry)))
     url = '{}/match?{}'.format(OSRM_API_URL, qs)
     res = requests.get(url)
     data = res.json()
+    return data
+
+def get_matched_trace(geometry):
+    data = get_osrm_match_data(geometry)
 
     # Silently ignore matches with multiple linestrings
     if len(data['matchings']) != 1:
         return None
 
-    line = get_polyline(data['matchings'][0]['geometry'])
+    # Accept either compressed (polyline) or uncompressed (array of pairs)
+    if isinstance(data['matchings'][0]['geometry'], basestring):
+        line = get_polyline(data['matchings'][0]['geometry'])
+    else:
+        line = data['matchings'][0]['geometry']
     return line

@@ -33,12 +33,11 @@ def make_bounds(bbox_geojson):
 def _iter_segments_geojson_features(segments):
     bounds = make_bounds(bbox)
     for segment in segments:
-        if segment.num_rides != 1:
+        if segment.num_rides < 1:
             continue
 
-        if not bounds.prepared.contains(Point(segment.lat_start, segment.lng_start)):
-            continue;
-
+        #if not bounds.prepared.contains(Point(segment.lat_start, segment.lng_start)):
+        #    continue;
 
         yield {
             'type': 'Feature',
@@ -50,7 +49,9 @@ def _iter_segments_geojson_features(segments):
                 'type': 'LineString',
             },
             'properties': {
+                'segment_pk': segment.pk,
                 'ride_count': segment.num_rides,
+                'rides': [ so.ride.pk for so in segment.segmentordering_set.all() ],
             },
         }
 

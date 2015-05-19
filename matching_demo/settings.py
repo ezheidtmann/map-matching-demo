@@ -20,12 +20,15 @@ BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 SECRET_KEY = 'b9a5#p31t!(*)-lty+2q%r=ushzhwg%er-q+n4z($(8e8mehg#'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.getenv('DJANGO_DEBUG', 'True') == 'True'
 
 TEMPLATE_DEBUG = True
 
 ALLOWED_HOSTS = []
 
+# Media: user-uploaded files
+MEDIA_ROOT = os.getenv('MEDIA_ROOT', '.')
+MEDIA_URL = os.getenv('MEDIA_URL', 'media/')
 
 # Application definition
 
@@ -58,12 +61,18 @@ WSGI_APPLICATION = 'matching_demo.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/1.7/ref/settings/#databases
 
-DATABASES = {
-    'default': {
+import dj_database_url
+DATABASES = {}
+# To set database URL, set DATABASE_URL in .env. For example:
+# DATABASE_URL="postgres://foo:bar@localhost:5432/db"
+DATABASES['default'] = dj_database_url.config()
+
+# Default to local sqlite
+if 'NAME' not in DATABASES['default']:
+    DATABASES['default'] = {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
-}
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.7/topics/i18n/
@@ -81,8 +90,8 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.7/howto/static-files/
-
-STATIC_URL = '/static/'
+STATIC_URL = os.getenv('STATIC_URL', '/static/')
+STATIC_ROOT = os.getenv('STATIC_ROOT', os.path.join(BASE_DIR, 'staticfiles'))
 
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',

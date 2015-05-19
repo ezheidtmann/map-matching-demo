@@ -24,6 +24,10 @@ jQuery(function($) {
     .domain([1, 20])
     .range(['#0f0', '#f00']);
 
+  var popupTpl = _.template('Segment PK: <%= properties.segment_pk %><br><br>'
+    + '<ul><% _.each(properties.rides, function(ride_pk) { %><li>Ride: <%= ride_pk %></li><% }) %></ul>'
+    + 'Segment coordinates: <%= JSON.stringify(geometry.coordinates) %>');
+
   $.ajax('/segments').done(function(data) {
     window.data = data;
     L.geoJson(data, {
@@ -43,7 +47,7 @@ jQuery(function($) {
         };
       },
       onEachFeature: function(feature, layer) {
-        layer.bindPopup(feature.properties.segment_pk + ':<br><br>' + feature.properties.rides.join('<br>') + '<br>' + JSON.stringify(feature.geometry.coordinates));
+        layer.bindPopup(popupTpl(feature));
       }
     }).addTo(map);
     $('#loading').hide();

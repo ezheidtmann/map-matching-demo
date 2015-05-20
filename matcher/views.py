@@ -52,6 +52,9 @@ def _iter_segments_geojson_features(segments):
             },
         }
 
+from django.views.decorators.cache import cache_page
+
+@cache_page(60 * 60 * 12)
 def segments(request):
     from django.db.models import Count
     segments = models.Segment.objects.annotate(ride_count=Count('segmentordering')).filter(ride_count__gt=1)

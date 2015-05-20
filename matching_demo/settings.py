@@ -74,6 +74,13 @@ if 'NAME' not in DATABASES['default']:
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
 
+CACHES = {
+    'default': {
+        'BACKEND':  'django.core.cache.backends.db.DatabaseCache',
+        'LOCATION': 'django_cache',
+    }
+}
+
 # Internationalization
 # https://docs.djangoproject.com/en/1.7/topics/i18n/
 
